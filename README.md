@@ -1,6 +1,7 @@
-# expenses
+# aplicativo de controle de gastos pessoais
 
-A new Flutter project.
+Esse projeto é um aplicativo que te ajuda a controlar seus 
+gastos pessoais !
 
 ## Getting Started
 
