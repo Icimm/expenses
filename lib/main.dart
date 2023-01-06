@@ -26,6 +26,8 @@ class MyhomePage extends StatefulWidget {
 }
 
 class _MyhomePageState extends State<MyhomePage> {
+
+
   final _transactions = [
     Transaction(
         id: 't1',
@@ -50,7 +52,6 @@ class _MyhomePageState extends State<MyhomePage> {
         title: Text('Despesas Pessoais',),
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget> [
           Container(
@@ -107,6 +108,33 @@ class _MyhomePageState extends State<MyhomePage> {
                  ),
               );
             }).toList()
+          ),
+          Card(
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: <Widget>[
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Titulo',
+                    ),
+                  ),
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Valor (R\$)',
+                    ),
+                  ),
+                  TextButton(
+                    child: Text('Nova Transação'),
+                    style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors.purple),
+                    ),
+                    onPressed: () {},
+                  )
+                ],
+              ),
+            ),
           )
         ],
       ),
