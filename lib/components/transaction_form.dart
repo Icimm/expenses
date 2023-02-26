@@ -1,25 +1,46 @@
 import 'package:flutter/material.dart';
+import "package:intl/intl.dart";
 
-
-class TransactionForm extends StatelessWidget {
-
-  final titleController = TextEditingController();
-  final valueController = TextEditingController();
-
+class TransactionForm extends StatefulWidget {
   final void Function(String, double) onSubmit;
+
 
   TransactionForm(this.onSubmit);
 
-  _submitForm() {
-      final title = titleController.text;
-      final value = double.parse(valueController.text);
+  @override
+  State<TransactionForm> createState() => _TransactionFormState();
+}
 
-      if(title.isEmpty || value<= 0) {
-        return;
-      }
-     onSubmit(title, value);
+class _TransactionFormState extends State<TransactionForm> {
+  final _titleController = TextEditingController();
+  final _valueController = TextEditingController();
+  DateTime _selectedDate;
+
+  _submitForm() {
+    final title = _titleController.text;
+    final value = double.parse(_valueController.text);
+
+    if(title.isEmpty || value<= 0) {
+      return;
+    }
+    widget.onSubmit(title, value );
   }
 
+  _showDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2019),
+      lastDate: DateTime.now(),
+       ).then((pickedDate) {
+         if(pickedDate == null) {
+           return;
+         }
+         setState(() {
+         _selectedDate = pickedDate;
+         });
+       });
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -30,31 +51,75 @@ class TransactionForm extends StatelessWidget {
         child: Column(
           children: <Widget>[
             TextField(
-              controller: titleController,
+              controller: _titleController,
               onSubmitted: (value) => _submitForm(),
               decoration: InputDecoration(
                 labelText: 'Titulo',
               ),
             ),
             TextField(
-              controller: valueController,
+              controller: _valueController,
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               onSubmitted: (value) => _submitForm(),
               decoration: InputDecoration(
                 labelText: 'Valor (R\$)',
               ),
             ),
-            TextButton(
-              child: Text('Nova Transação'),
-              style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.purple),
-
+            Container(
+              height: 70,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                  child: Text(
+                     _selectedDate == null
+                         ? 'Nenhuma data selecionada!'
+                         :  DateFormat('dd/MM/y').format(_selectedDate),
+                   ),
+                  ),
+                  TextButton(
+                    child: Text(
+                      'Selecionar Data',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold
+                      ),
+                    ),
+                    style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors.lightBlue),
+                    ),
+                    onPressed: _showDatePicker,
+                  ),
+                ],
               ),
-              onPressed: _submitForm,
-            )
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                ElevatedButton(
+                  child: Text(
+                    'Nova Transação',
+                    style: TextStyle(
+                        color: Colors.white
+                    ),
+                  ),
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.lightBlue),
+                  ),
+                  onPressed: _submitForm,
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 }
+
+
+
+
+
+
+
+
+

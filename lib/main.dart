@@ -3,6 +3,7 @@ import 'models/transactions.dart';
 import 'components/transaction_form.dart';
 import 'components/transaction_list.dart';
 import 'package:flutter/material.dart';
+import 'components/chart.dart';
 
 main() => runApp(ExpensesApp());
 
@@ -18,8 +19,8 @@ final ThemeData tema = ThemeData();
       home:MyhomePage(),
       theme: ThemeData(
         colorScheme: tema.colorScheme.copyWith(
-          primary: Colors.purple,
-          secondary: Colors.amber,
+          primary: Colors.lightBlue,
+          secondary: Colors.lightBlue,
         ),
         textTheme: tema.textTheme.copyWith(
           headline6: TextStyle(
@@ -50,19 +51,28 @@ class MyhomePage extends StatefulWidget {
 class _MyhomePageState extends State<MyhomePage> {
 
 final  List<Transaction>_transactions = [
-  // Transaction(
-  //   id: 't1',
-  //   title: 'Novo Tênis de Skate',
-  //   value: 310.76,
-  //   date: DateTime.now(),
-  // ),
-  // Transaction(
-  //   id: 't2',
-  //   title: 'Conta de Luz',
-  //   value: 211.30,
-  //   date: DateTime.now(),
-  // ),
+  Transaction(
+    id: 't0',
+    title: 'Conta Antiga',
+    value: 400.00,
+    date: DateTime.now().subtract(Duration(days: 33)),
+  ),
+  Transaction(
+    id: 't2',
+    title: 'Conta de Luz',
+    value: 211.30,
+    date: DateTime.now().subtract(Duration(days: 4)),
+  ),
 ];
+
+List<Transaction> get _recentTransactions{
+  return _transactions.where((tr) {
+    return tr.date.isAfter(DateTime.now().subtract(
+        Duration(days: 7),
+    ));
+  }).toList();
+}
+
 
   addTransaction(String title, double value){
 
@@ -93,7 +103,7 @@ final  List<Transaction>_transactions = [
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Despesas Pessoais',),
+        title: Text('Despesas Pessoais'),
         actions: <Widget>[
           Padding(
             padding: EdgeInsets.only(left: 15),
@@ -108,12 +118,7 @@ final  List<Transaction>_transactions = [
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget> [
-          Container(
-            child: Card(
-              child: Text('Grafico'),
-              elevation: 5,
-            ),
-          ),
+          Chart(_recentTransactions),
           TransactionList(_transactions),
         ],
        ),
