@@ -51,18 +51,7 @@ class MyhomePage extends StatefulWidget {
 class _MyhomePageState extends State<MyhomePage> {
 
 final  List<Transaction>_transactions = [
-  Transaction(
-    id: 't0',
-    title: 'Conta Antiga',
-    value: 400.00,
-    date: DateTime.now().subtract(Duration(days: 33)),
-  ),
-  Transaction(
-    id: 't2',
-    title: 'Conta de Luz',
-    value: 211.30,
-    date: DateTime.now().subtract(Duration(days: 4)),
-  ),
+
 ];
 
 List<Transaction> get _recentTransactions{
@@ -74,13 +63,13 @@ List<Transaction> get _recentTransactions{
 }
 
 
-  addTransaction(String title, double value){
+  addTransaction(String title, double value, DateTime date){
 
     final newTransaction = Transaction(
       id: Random().nextDouble().toString(),
       title: title,
       value: value,
-      date: DateTime.now(),
+      date: date,
     );
 
     setState(() {
@@ -90,6 +79,13 @@ List<Transaction> get _recentTransactions{
     Navigator.of(context).pop();
   }
 
+  _removeTransaction(String id) {
+  setState(() {
+    _transactions.removeWhere((tr) => tr.id == id);
+   });
+  }
+
+
   _opentransactionFormModal(BuildContext context) {
     showModalBottomSheet(
         context: context,
@@ -98,28 +94,38 @@ List<Transaction> get _recentTransactions{
         });
   }
 
-
   @override
   Widget build(BuildContext context) {
+   final appBar = AppBar(
+         title: Text('Despesas Pessoais'),
+         actions: <Widget>[
+           Padding(
+             padding: EdgeInsets.only(left: 15),
+             child: IconButton(
+               icon: Icon(Icons.add),
+               onPressed: () => _opentransactionFormModal(context),
+             ),
+           )
+         ],
+       );
+
+   final avaliableHeight = MediaQuery.of(context).size.height
+   - appBar.preferredSize.height - MediaQuery.of(context).padding.top;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Despesas Pessoais'),
-        actions: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(left: 15),
-            child: IconButton(
-                icon: Icon(Icons.add),
-              onPressed: () => _opentransactionFormModal(context),
-            ),
-          )
-        ],
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget> [
-          Chart(_recentTransactions),
-          TransactionList(_transactions),
+          Container(
+              height: avaliableHeight *0.30,
+              child: Chart(_recentTransactions)
+          ),
+          Container(
+            height: avaliableHeight *0.70,
+              child: TransactionList(_transactions, _removeTransaction)
+          ),
         ],
        ),
       ),
