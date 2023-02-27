@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:flutter/services.dart';
+
 import 'models/transactions.dart';
 import 'components/transaction_form.dart';
 import 'components/transaction_list.dart';
@@ -50,9 +52,8 @@ class MyhomePage extends StatefulWidget {
 }
 class _MyhomePageState extends State<MyhomePage> {
 
-final  List<Transaction>_transactions = [
-
-];
+final  List<Transaction>_transactions = [];
+bool _showChart = false;
 
 List<Transaction> get _recentTransactions{
   return _transactions.where((tr) {
@@ -94,23 +95,21 @@ List<Transaction> get _recentTransactions{
         });
   }
 
-  @override
-  Widget build(BuildContext context) {
-   final appBar = AppBar(
-         title: Text('Despesas Pessoais'),
-         actions: <Widget>[
-           Padding(
-             padding: EdgeInsets.only(left: 15),
-             child: IconButton(
-               icon: Icon(Icons.add),
-               onPressed: () => _opentransactionFormModal(context),
-             ),
-           )
-         ],
-       );
+@override
+Widget build(BuildContext context) {
+  final appBar = AppBar(
+    title: const Text('Despesas Pessoais'),
+    actions: [
+      IconButton(
+        icon: const Icon(Icons.add),
+        onPressed: () => _opentransactionFormModal(context),
+      ),
+    ],
+  );
 
    final avaliableHeight = MediaQuery.of(context).size.height
-   - appBar.preferredSize.height - MediaQuery.of(context).padding.top;
+   - appBar.preferredSize.height -
+       MediaQuery.of(context).padding.top;
 
     return Scaffold(
       appBar: appBar,
@@ -118,12 +117,27 @@ List<Transaction> get _recentTransactions{
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget> [
-          Container(
-              height: avaliableHeight *0.30,
+          Row(
+            children: <Widget>[
+              Text('Exibir Gráfico'),
+              Switch(
+                  value: _showChart,
+                  onChanged: (value) {
+                    setState(() {
+                      _showChart = value;
+                    });
+                  },
+              ),
+            ],
+          ),
+          if (_showChart)
+              SizedBox(
+              height: avaliableHeight * 0.3,
               child: Chart(_recentTransactions)
           ),
-          Container(
-            height: avaliableHeight *0.70,
+          if (!_showChart)
+          SizedBox(
+              height: avaliableHeight * 0.7,
               child: TransactionList(_transactions, _removeTransaction)
           ),
         ],
