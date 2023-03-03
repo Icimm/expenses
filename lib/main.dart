@@ -1,6 +1,6 @@
 import 'dart:math';
+import 'dart:io';
 import 'package:flutter/services.dart';
-
 import 'models/transactions.dart';
 import 'components/transaction_form.dart';
 import 'components/transaction_list.dart';
@@ -97,6 +97,10 @@ List<Transaction> get _recentTransactions{
 
 @override
 Widget build(BuildContext context) {
+  final mediaQuery = MediaQuery.of(context);
+  bool isLandscape =
+      MediaQuery.of(context).orientation == Orientation.landscape;
+
   final appBar = AppBar(
     title: const Text('Despesas Pessoais'),
     actions: [
@@ -104,12 +108,20 @@ Widget build(BuildContext context) {
         icon: const Icon(Icons.add),
         onPressed: () => _opentransactionFormModal(context),
       ),
+      if (isLandscape) IconButton(
+        icon: Icon(_showChart ? Icons.list : Icons.show_chart),
+        onPressed: () {
+          setState(() {
+            _showChart = !_showChart;
+          });
+        },
+      ),
     ],
   );
 
    final avaliableHeight = MediaQuery.of(context).size.height
    - appBar.preferredSize.height -
-       MediaQuery.of(context).padding.top;
+       mediaQuery.padding.top;
 
     return Scaffold(
       appBar: appBar,
@@ -117,34 +129,39 @@ Widget build(BuildContext context) {
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget> [
-          Row(
-            children: <Widget>[
-              Text('Exibir Gráfico'),
-              Switch(
-                  value: _showChart,
-                  onChanged: (value) {
-                    setState(() {
-                      _showChart = value;
-                    });
-                  },
-              ),
-            ],
-          ),
-          if (_showChart)
+      //   if (isLandscape)
+      // Row(
+      //   mainAxisAlignment: MainAxisAlignment.center,
+      //   children: <Widget>[
+      //     Text('Exibir Gráfico'),
+      //     Switch.adaptive(
+      //       activeColor: Theme.of(context).colorScheme.secondary,
+      //         value: _showChart,
+      //         onChanged: (value) {
+      //           setState(() {
+      //             _showChart = value;
+      //           });
+      //         },
+      //     ),
+      //   ],
+      // ),
+          if (_showChart || !isLandscape)
               SizedBox(
-              height: avaliableHeight * 0.3,
+              height: avaliableHeight * (isLandscape ? 0.8 : 0.3),
               child: Chart(_recentTransactions)
           ),
-          if (!_showChart)
+          if (!_showChart || !isLandscape)
           SizedBox(
-              height: avaliableHeight * 0.7,
+              height: avaliableHeight * (isLandscape ? 0.1 : 0.7),
               child: TransactionList(_transactions, _removeTransaction)
           ),
         ],
        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+      floatingActionButton: Platform.isIOS
+          ? Container()
+          : FloatingActionButton(
+           child: Icon(Icons.add),
         onPressed: () => _opentransactionFormModal(context),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

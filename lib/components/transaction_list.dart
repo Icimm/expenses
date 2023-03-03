@@ -8,25 +8,29 @@ class TransactionList extends StatelessWidget {
 
   TransactionList(this.transactions, this.onRemove);
 
-  @override
+@override
   Widget build(BuildContext context) {
     return transactions.isEmpty
-        ? Column(
-            children: <Widget>[
-              SizedBox(height: 20),
+        ? LayoutBuilder(
+            builder: (ctx, constraints) {
+              return Column(
+                children: <Widget>[
+                  SizedBox(height: 20),
               Text(
-                'Nenhuma Transação Cadastrada',
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              SizedBox(height: 20),
-              SizedBox(
-                height: 200,
-                child: Image.asset(
-                  'assets/images/waiting.png',
-                  fit: BoxFit.cover,
-                ),
-              )
-            ],
+                 'Nenhuma Transação Cadastrada !',
+                 style: Theme.of(context).textTheme.headline6,
+                 ),
+                  SizedBox(height: 20),
+                  SizedBox(
+                    height: constraints.maxHeight * 0.6,
+                    child: Image.asset(
+                      'assets/images/waiting.png',
+                      fit: BoxFit.cover,
+                       ),
+                    ),
+                 ],
+              );
+            },
           )
         : ListView.builder(
             itemCount: transactions.length,
@@ -42,7 +46,14 @@ class TransactionList extends StatelessWidget {
                   leading: CircleAvatar(
                     child: Padding(
                       padding: const EdgeInsets.all(6),
-                      child: FittedBox(child: Text('R\$${tr.value}')),
+                      child: FittedBox(
+                          child: Text(
+                              'R\$${tr.value}',
+                                  style: const TextStyle(
+                                  color: Colors.white,
+                            ),
+                          ),
+                       ),
                     ),
                   ),
                   title: Text(
@@ -52,10 +63,20 @@ class TransactionList extends StatelessWidget {
                   subtitle: Text(
                     DateFormat('d MMM y').format(tr.date),
                   ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
+                  trailing: MediaQuery.of(context).size.width > 480
+                    ? TextButton.icon(
                     onPressed: () => onRemove(tr.id),
+                    icon: Icon(Icons.delete,
+                    color: Theme.of(context).errorColor),
+                      label: Text('Excluir',
+                          style: TextStyle(
+                          color: Theme.of(context).errorColor),
+                      ),
+                    )
+                   : IconButton(
+                    icon: Icon(Icons.delete),
                     color: Theme.of(context).errorColor,
+                    onPressed: () => onRemove(tr.id),
                   ),
                 ),
               );

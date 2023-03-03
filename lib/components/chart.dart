@@ -3,8 +3,6 @@ import 'chart_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-
-
 class Chart extends StatelessWidget {
 
   final List<Transaction> recentTransaction;
@@ -28,9 +26,6 @@ class Chart extends StatelessWidget {
          totalSum += recentTransaction[i].value;
        }
       }
-
-      print(DateFormat.E().format(weekDay)[0]);
-      print(totalSum);
 
       return{
         'day':DateFormat.E().format(weekDay)[0],

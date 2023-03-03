@@ -44,71 +44,78 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: _titleController,
-              onSubmitted: (value) => _submitForm(),
-              decoration: InputDecoration(
-                labelText: 'Titulo',
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 5,
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: 10,
+            right: 10,
+            left: 10,
+            bottom: 10 + MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            children: <Widget>[
+              TextField(
+                controller: _titleController,
+                onSubmitted: (_) => _submitForm(),
+                decoration: InputDecoration(
+                  labelText: 'Titulo',
+                ),
               ),
-            ),
-            TextField(
-              controller: _valueController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              onSubmitted: (value) => _submitForm(),
-              decoration: InputDecoration(
-                labelText: 'Valor (R\$)',
+              TextField(
+                controller: _valueController,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                onSubmitted: (value) => _submitForm(),
+                decoration: InputDecoration(
+                  labelText: 'Valor (R\$)',
+                ),
               ),
-            ),
-            Container(
-              height: 70,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                  child: Text(
-                     _selectedDate == null
-                         ? 'Nenhuma data selecionada!'
-                         :  DateFormat('dd/MM/y').format(_selectedDate!),
-                   ),
-                  ),
-                  TextButton(
+              SizedBox(
+                height: 70,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
                     child: Text(
-                      'Selecionar Data',
+                       _selectedDate == null
+                           ? 'Nenhuma data selecionada!'
+                           :  DateFormat('dd/MM/y').format(_selectedDate!),
+                     ),
+                    ),
+                    TextButton(
+                      child: Text(
+                        'Selecionar Data',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold
+                        ),
+                      ),
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.lightBlue),
+                      ),
+                      onPressed: _showDatePicker,
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  ElevatedButton(
+                    child: Text(
+                      'Nova Transação',
                       style: TextStyle(
-                          fontWeight: FontWeight.bold
+                          color: Colors.white
                       ),
                     ),
                     style: ButtonStyle(
                       foregroundColor: MaterialStateProperty.all<Color>(Colors.lightBlue),
                     ),
-                    onPressed: _showDatePicker,
+                    onPressed: _submitForm,
                   ),
                 ],
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                ElevatedButton(
-                  child: Text(
-                    'Nova Transação',
-                    style: TextStyle(
-                        color: Colors.white
-                    ),
-                  ),
-                  style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.lightBlue),
-                  ),
-                  onPressed: _submitForm,
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
