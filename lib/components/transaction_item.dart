@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/transactions.dart';
 import 'package:intl/intl.dart';
@@ -25,6 +26,16 @@ class _TransactionItemState extends State<TransactionItem> {
     Colors.black,
   ];
 
+  late Color _backgroundColor;
+
+  @override
+  void initState() {
+    super.initState();
+
+    int i = Random().nextInt(5);
+    _backgroundColor = colors[i];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -35,6 +46,7 @@ class _TransactionItemState extends State<TransactionItem> {
       ),
       child: ListTile(
         leading: CircleAvatar(
+          backgroundColor: _backgroundColor,
           child: Padding(
             padding: const EdgeInsets.all(6),
             child: FittedBox(
