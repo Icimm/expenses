@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'models/transactions.dart';
 import 'components/transaction_form.dart';
 import 'components/transaction_list.dart';
@@ -51,9 +50,26 @@ class MyhomePage extends StatefulWidget {
   State<MyhomePage> createState() => _MyhomePageState();
 }
 
-class _MyhomePageState extends State<MyhomePage> {
+class _MyhomePageState extends State<MyhomePage> with WidgetsBindingObserver {
   final List<Transaction> _transactions = [];
   bool _showChart = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print(state);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+  }
 
   List<Transaction> get _recentTransactions {
     return _transactions.where((tr) {
@@ -101,11 +117,12 @@ class _MyhomePageState extends State<MyhomePage> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     final iconList = Platform.isIOS ? CupertinoIcons.refresh : Icons.list;
-    final chartList = Platform.isIOS ? CupertinoIcons.refresh : Icons.show_chart;
-
+    final chartList =
+        Platform.isIOS ? CupertinoIcons.refresh : Icons.show_chart;
 
     final actions = [
       if (isLandscape)
@@ -134,37 +151,36 @@ class _MyhomePageState extends State<MyhomePage> {
 
     final bodyPage = SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              //   if (isLandscape)
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: <Widget>[
-              //     Text('Exibir Gráfico'),
-              //     Switch.adaptive(
-              //       activeColor: Theme.of(context).colorScheme.secondary,
-              //         value: _showChart,
-              //         onChanged: (value) {
-              //           setState(() {
-              //             _showChart = value;
-              //           });
-              //         },
-              //     ),
-              //   ],
-              // ),
-              if (_showChart || !isLandscape)
-                SizedBox(
-                    height: avaliableHeight * (isLandscape ? 0.8 : 0.3),
-                    child: Chart(_recentTransactions)),
-              if (!_showChart || !isLandscape)
-                SizedBox(
-                    height: avaliableHeight * (isLandscape ? 0.1 : 0.7),
-                    child: TransactionList(_transactions, _removeTransaction)),
-            ],
-          ),
-        )
-    );
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          //   if (isLandscape)
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: <Widget>[
+          //     Text('Exibir Gráfico'),
+          //     Switch.adaptive(
+          //       activeColor: Theme.of(context).colorScheme.secondary,
+          //         value: _showChart,
+          //         onChanged: (value) {
+          //           setState(() {
+          //             _showChart = value;
+          //           });
+          //         },
+          //     ),
+          //   ],
+          // ),
+          if (_showChart || !isLandscape)
+            SizedBox(
+                height: avaliableHeight * (isLandscape ? 0.8 : 0.3),
+                child: Chart(_recentTransactions)),
+          if (!_showChart || !isLandscape)
+            SizedBox(
+                height: avaliableHeight * (isLandscape ? 0.1 : 0.7),
+                child: TransactionList(_transactions, _removeTransaction)),
+        ],
+      ),
+    ));
 
     return Platform.isIOS
         ? CupertinoPageScaffold(
